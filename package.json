@@ -4,6 +4,7 @@
   "author": {
     "name": "Emily Smith"
   },
+  "homepage": "https://adabyronlovelace.github.io/mastermind/",
   "private": true,
   "dependencies": {
     "bootstrap": "3",
@@ -13,9 +14,14 @@
     "react-scripts": "1.1.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "gh-pages": "^1.1.0"
   }
 }

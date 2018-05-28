@@ -7,55 +7,30 @@ export default class App extends React.Component {
     super(props)
     this.state = {
       guesses: [
-        [
-          {
-            color: 1,
-            rightColor: false,
-            rightPosition: false
-          }, {
-            color: 3,
-            rightColor: true,
-            rightPosition: false
-          }, {
-            color: 1,
-            rightColor: false,
-            rightPosition: false
-          }, {
-            color: 2,
-            rightColor: true,
-            rightPosition: true
-          }
-        ], [
-          {
-            color: 4,
-            rightColor: false,
-            rightPosition: false
-          }, {
-            color: 1,
-            rightColor: true,
-            rightPosition: false
-          }, {
-            color: 2,
-            rightColor: false,
-            rightPosition: false
-          }, {
-            color: 5,
-            rightColor: true,
-            rightPosition: false
-          }
-        ]
+        {
+          numColor: 2,
+          numPos: 1,
+          nums: [1,2,3,2]
+        }, {
+          numColor: 2,
+          numPos: 0,
+          nums: [2,2,2,2]
+        } 
       ],
-      newGuess: [],
-      currGuess: 0,
       solution: [0,0,0,0],
-      revealed: false
+      currGuess: [],
+      won: false
     }
     this.clickColor = this.clickColor.bind(this)
     this.pickSolution = this.pickSolution.bind(this)
+    this.checkGuessColors = this.checkGuessColors.bind(this)
+    this.checkGuessPosition = this.checkGuessPosition.bind(this)
   }
+
   componentDidMount() {
     this.pickSolution()
   }
+
   pickSolution() {
     let solution = []
     for (let i=0;i<4;i++) {
@@ -66,40 +41,65 @@ export default class App extends React.Component {
     })
   }
 
+  reset() {
+    this.setState({
+      guesses: [],
+      solution: [0,0,0,0],
+      currGuess: [],
+      won: false
+    }, () => this.pickSolution())
+  }
+
   clickColor(color) {
-    let guess = this.state.newGuess
     let guesses = this.state.guesses
-    const ind = guess.length - 1
-    const rightColor = this.state.solution.includes(color)
-    const rightPosition = this.state.solution[ind] === color
-    if (ind === 3) {
-      guesses.push(guess)
+    let currGuess = this.state.currGuess
+    let newGuess = {}
+    let won = false
+    currGuess.push(color)
+
+    if (currGuess.length === 4) {
+      newGuess = {
+        numColor: this.checkGuessColors(currGuess, this.state.solution),
+        numPos: this.checkGuessPosition(currGuess, this.state.solution),
+        nums: currGuess
+      }
+      guesses.push(newGuess)
+      won = newGuess.numPos === 4 ? true : false
       this.setState({
         guesses: guesses,
-        newGuess: []
+        currGuess: [],
+        won: won
       })
     } else {
-      guess.push({
-        color: color,
-        rightColor: rightColor,
-        rightPosition: rightPosition
-      })
       this.setState({
-        newGuess: guess
+        currGuess: currGuess
       })
     }
   }
+
+  checkGuessColors(guess, solution) {
+    let num = 0
+    for (let i=0;i<4;i++) {
+      num = solution.includes(guess[i]) ? num + 1 : num
+    }
+    return num
+  }
+
+  checkGuessPosition(guess, solution) {
+    let num = 0
+    for (let i=0;i<4;i++) {
+      num = solution[i] === guess[i] ? num + 1 : num
+    }
+    return num
+  }
+
   render() {
     return (
-      <Grid fluid={true}>
-        <Row>
-          <Col>
-            <h1>Mastermind</h1>
-          </Col>
-        </Row>
-        <Well className="center">
+      <div className="center">
+        <h1>Mastermind</h1>
+        <div className="section">
           {
-            this.state.revealed ? 
+            this.state.won ? 
             this.state.solution.map((color, index) => {
               return (
                 <Ball color={color} key={index}/>
@@ -111,57 +111,57 @@ export default class App extends React.Component {
               )
             })
           }
-        </Well>
-        <Panel bsStyle="info">
-          <Panel.Heading>
-            <Panel.Title componentClass="h3" className="center">Number of tries: {this.state.guesses.length}</Panel.Title>
-          </Panel.Heading>
-          <Panel.Body className="center">
-            <table>
-              <thead>
-              <tr>
-                <th>your guess</th>
-                <th>color</th>
-                <th>color &amp; position</th>
-              </tr>
-              </thead>
-              <tbody>
-              { this.state.guesses.map((guess, index) => {
-                return (
-                  <tr key={index}>
-                    <td>
-                    { guess.map((item, index) => {
-                      return (
-                        <Ball color={item.color} key={index}/>
-                      )
-                    })}
-                    </td>
-                    <td>
-                      { guess.filter(item => {
-                        return (item.rightColor)
-                      }).length}
-                    </td>
-                    <td>
-                    { guess.filter(item => {
-                        return (item.rightPosition)
-                      }).length}
-                    </td>
-                  </tr>
-                )
-              })}
-              </tbody>
-            </table>
-          </Panel.Body>
-        </Panel>
-        <Well className="center">
-          <h4>Make your guess:</h4>
-          <div className={`ball-select purple`} onClick={() => this.clickColor(1)}/>
-          <div className={`ball-select blue`} onClick={() => this.clickColor(2)}/>
-          <div className={`ball-select pink`} onClick={() => this.clickColor(3)}/>
-          <div className={`ball-select yellow`} onClick={() => this.clickColor(4)}/>
-          <div className={`ball-select green`} onClick={() => this.clickColor(5)}/>
-        </Well>
-      </Grid>
+        </div>
+        { this.state.won ? 
+          <h2 className="won">You won in {this.state.guesses.length} tries!</h2> : 
+          <h3>Number of tries: {this.state.guesses.length}</h3>}
+        <div className="section">
+          <table>
+            <thead>
+            <tr>
+              <th>your guess</th>
+              <th>color</th>
+              <th>color &amp; position</th>
+            </tr>
+            </thead>
+            <tbody>
+            { this.state.guesses.map((guess, index) => {
+              return (
+                <tr key={index}>
+                  <td>
+                  { guess.nums.map((item, index) => {
+                    return (
+                      <Ball color={item.color} key={index}/>
+                    )
+                  })}
+                  </td>
+                  <td>
+                    { guess.numColor }
+                  </td>
+                  <td>
+                    { guess.numPos }
+                  </td>
+                </tr>
+              )
+            })}
+            </tbody>
+          </table>
+        </div>
+        {
+          this.state.won ? 
+          <div className="section">
+            <button onClick={this.reset}>New Game</button>
+          </div> :
+          <div className="section">
+            <h4>Make your guess:</h4>
+            <div className={`ball-select purple`} onClick={() => this.clickColor(1)}/>
+            <div className={`ball-select blue`} onClick={() => this.clickColor(2)}/>
+            <div className={`ball-select pink`} onClick={() => this.clickColor(3)}/>
+            <div className={`ball-select yellow`} onClick={() => this.clickColor(4)}/>
+            <div className={`ball-select green`} onClick={() => this.clickColor(5)}/>
+          </div>
+        }
+      </div>
     )
   }
 }

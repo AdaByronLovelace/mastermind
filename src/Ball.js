@@ -20,10 +20,8 @@ export default class Ball extends React.Component {
 
   render() {
     return (
-      <div>
-        <div 
-          className={`ball ${this.getColor()}`}>
-        </div>
+      <div 
+        className={`ball ${this.getColor()}`}>
       </div>
     )
   }

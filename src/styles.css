@@ -4,12 +4,13 @@ body {
   font-family: sans-serif;
 }
 
-h1 {
+h1, h3 {
   text-align: center;
 }
 
 table {
   border-collapse: collapse;
+  text-align: center;
 }
 
 table, th, td {
@@ -24,10 +25,18 @@ td div {
   display: inline-table;
 }
 
-.center {
+.center, .section {
   display: flex;
-	flex-direction: row;
-	justify-content: center;
+  justify-content: center;
+  margin: 20px;
+}
+
+.center {
+  flex-direction: column;
+}
+
+.section {
+  flex-direction: row;
 }
 
 .ball {
@@ -48,6 +57,14 @@ td div {
   margin: 0 10px;
 }
 
+.ball-select:hover {
+  box-shadow: 4px 4px 10px 2px #999;
+}
+
+.ball-select:active {
+  box-shadow: none;
+}
+
 .gray {
   background: lightgray;
 }
@@ -56,8 +73,10 @@ td div {
   content: '?';
   font-size: 1.5em;
 	text-align: center;
-	font-weight: bold;
-	padding-left: 7px;
+  font-weight: bold;
+  width: 30px;
+	height: 30px;
+	display: inline-block;
 }
 
 .pink {

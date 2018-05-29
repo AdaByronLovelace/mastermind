@@ -6,17 +6,7 @@ export default class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      guesses: [
-        {
-          numColor: 2,
-          numPos: 1,
-          nums: [1,2,3,2]
-        }, {
-          numColor: 2,
-          numPos: 0,
-          nums: [2,2,2,2]
-        } 
-      ],
+      guesses: [],
       solution: [0,0,0,0],
       currGuess: [],
       won: false
@@ -25,6 +15,7 @@ export default class App extends React.Component {
     this.pickSolution = this.pickSolution.bind(this)
     this.checkGuessColors = this.checkGuessColors.bind(this)
     this.checkGuessPosition = this.checkGuessPosition.bind(this)
+    this.reset = this.reset.bind(this)
   }
 
   componentDidMount() {
@@ -77,14 +68,19 @@ export default class App extends React.Component {
     }
   }
 
-  checkGuessColors(guess, solution) {
+  checkGuessColors(guess, sol) {
     let num = 0
+    let index = -1
+    let solution = [...sol]
     for (let i=0;i<4;i++) {
-      num = solution.includes(guess[i]) ? num + 1 : num
+      index = solution.indexOf(guess[i])
+      if (index > -1) {
+        solution.splice(index, 1)
+        num = num + 1
+      }
     }
     return num
   }
-
   checkGuessPosition(guess, solution) {
     let num = 0
     for (let i=0;i<4;i++) {
@@ -131,7 +127,7 @@ export default class App extends React.Component {
                   <td>
                   { guess.nums.map((item, index) => {
                     return (
-                      <Ball color={item.color} key={index}/>
+                      <Ball color={item} key={index}></Ball>
                     )
                   })}
                   </td>
